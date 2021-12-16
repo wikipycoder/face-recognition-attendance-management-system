@@ -12,7 +12,6 @@ urlpatterns = [
     path('updateStudentRedirect/', views.updateStudentRedirect, name='updateStudentRedirect'),
     path('updateStudent/', views.updateStudent, name='updateStudent'),
     path('attendence/', views.takeAttendence, name='attendence'),
-    path("send_report/", views.send_report, name="send_report")
     # path('video_feed/', views.videoFeed, name='video_feed'),
     # path('videoFeed/', views.getVideo, name='videoFeed'),
 ]

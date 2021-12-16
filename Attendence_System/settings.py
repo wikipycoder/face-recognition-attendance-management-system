@@ -134,12 +134,3 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
-
-
-
-# host: "smtp.gmail.com"
-# port: EMAIL_PORT
-# username: EMAIL_HOST_USER
-# password: EMAIL_HOST_PASSWORD
-# use_tls: EMAIL_USE_TLS
-# use_ssl: EMAIL_USE_SSL
