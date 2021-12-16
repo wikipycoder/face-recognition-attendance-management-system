@@ -11,21 +11,33 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
  <img src="{% static 'images/usindh logo.jfif' %}" height="50px" width="80px">
- <span class="color-white">Attendance Management System</span>
+ <span class="color-white">Attendance Management System </span>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <span class="nav-link">Hello, {{ request.user.faculty }}</span>
-      </li>
+      {% if request.user.faculty %}
+        <li class="nav-item active">
+          <span class="nav-link">{{ request.user.faculty }}</span>
+        </li>
+      {% else %}
+        <li class="nav-item active">
+          <span class="nav-link">Admin</span>
+        </li>
+        
+      {% endif %}
       <li class="nav-item active">
         <a href="{% url 'home' %}" class="nav-link">Home</a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="{% url 'account' %}">Account</a>
       </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'send_report' %}">Send Report</a>
+      </li>
+
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
       </li>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, StreamingHttpResponse
-
+from django.core.mail import BadHeaderError, send_mass_mail
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -234,22 +234,23 @@ def facultyProfile(request):
 #     return render(request, 'attendence_sys/videoFeed.html')
 
 def get_student_attendence_performance(student):
-
+    
     try:
         percentage = 20/student.days
         absent = 20-student.days
     except ZeroDivisionError:
         percentage = 0
+        absent = 20
 
     performance = f"""
 
-        Stuent Name: { student.firstname } { student.firstname }\n\n
-        Roll No: { student.registration_id }\n\n
-        Department: { student.branch }\n\n
-        Year: { student.year }\n\n
-        Attendence Percentage: { percentage }%\n\n
-        Present Day/s: { student.days}\n\n
-        Absent Day/s: { absent }\n\n
+        Stuent Name: { student.firstname } { student.firstname }\n
+        Roll No: { student.registration_id }\n
+        Department: { student.branch }\n
+        Year: { student.year }\n
+        Attendence Percentage: { percentage }%\n
+        Present Day/s: { student.days}\n
+        Absent Day/s: { absent }\n  
     """
 
     return performance
@@ -262,26 +263,31 @@ def send_report(request):
 
     if request.method == 'GET':
 
-        if date.today().day >= 29:
-            if request.session.get("report", False):
-                messages.error(request, 'Report has been sent already.')
-                return redirect("home")
+        if date.today().day >= 16:
                 
-            students_array = []
             students = Student.objects.all()
             mails = []
             for student in students:
                 performance = get_student_attendence_performance(student)
-                student_instance = ('Attendence Report From University of Sindh, Jamshoro', performance, 'from@example.com', [student.contact]),
-                mails.append(student_instance)   
+                student_instance = ("Attendence Report From University of Sindh, Jamshoro", performance, 'example@gmail.com', [student.contact])
+                mails.append(student_instance)    
 
-            try:
+
+            try:    
                 send_mass_mail(tuple(mails))
-                request.session["report"] = True
             except BadHeaderError:
                 messages.error(request, 'Invalid header found.')
                 return redirect("home")
-        
+            except ValueError:
+                messages.error(request, "Network issue")
+                return redirect("home") 
+            except Exception:
+                messages.error(request, "SMTP sender refused...")
+                return redirect("home") 
+            
+            else:
+                messages.success(request, "Attendance Report has been sent")
+                return redirect("home")
         else:
             messages.error(request, "Attendence Report is supposed to be sent by end of every month")
             return redirect('home')
