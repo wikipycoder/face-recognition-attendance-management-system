@@ -23,11 +23,12 @@ class Faculty(models.Model):
 
 
 def student_directory_path(instance, filename): 
-    filename.replace(".", "")
-    name, ext = filename.split(".")
-    name = instance.registration_id # + "_" + instance.branch + "_" + instance.year + "_" + instance.section
-    filename = name +'.'+ ext 
-    return 'Student_Images/{}/{}/{}/{}'.format(instance.branch,instance.year,instance.section,filename)
+    filename = filename.split(".")
+    ext = filename.pop()
+    name = ''.join(filename) + "." + ext
+    registration_id = instance.registration_id # + "_" + instance.branch + "_" + instance.year + "_" + instance.section
+    filename = registration_id +'.'+ ext 
+    return 'Student_Images/{}'.format(filename)
 
 class Student(models.Model):
 

@@ -19,7 +19,7 @@
                 <center><h3>Take Attendence</h3></center>
                 <form class="form-horizontal" action="{% url 'attendence' %}" method="POST">
                     {% csrf_token %}
-                    <div class="form-group">
+                    <!-- div class="form-group">
                         <label for="sel1">Select Branch:</label>
                         <select name='branch' class="form-control" id="sel1">
                             <option value="CSE">CSE</option>
@@ -59,8 +59,8 @@
                             <option value="6">6</option>
                             <option value="7">7</option>
                         </select>
-                    </div>
-                    <button type="submit" class="btn btn-block btn-info">Take Attendence</button>
+                    </div -->
+                    <button type="submit" class="btn btn-block btn-info mt-3">Take Attendence</button>
                 </form>
             </div>
         </div>
@@ -140,7 +140,7 @@
 
     <div class="row">
         
-        <div class="col-md-6" style="margin-top: 20px;">
+        <div class="col-md-6" style="margin-top: -380px;">
             <div class="card card-body">
                 <center><h3>Update Student Details</h3></center>
                 <form class="form-horizontal" action="{% url 'updateStudentRedirect' %}" method="POST">

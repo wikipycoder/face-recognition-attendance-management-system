@@ -141,44 +141,52 @@ def takeAttendence(request):
                 return redirect("home")
 
 
-        details = {
-            'branch':request.POST['branch'],
-            'year': request.POST['year'],
-            'section':request.POST['section'],
-            'period':request.POST['period'],
-            'faculty':faculty
-            }
-        if Attendence.objects.filter(date = str(date.today()),branch = details['branch'], year = details['year'], section = details['section'],period = details['period']).count() != 0 :
-            messages.error(request, "Attendence already recorded.")
-            return redirect('home')
+        # details = {
+        #     'branch':request.POST['branch'],
+        #     'year': request.POST['year'],
+        #     'section':request.POST['section'],
+        #     'period':request.POST['period'],
+        #     'faculty':faculty
+        #     }
+        # if Attendence.objects.filter(date = str(date.today()),branch = details['branch'], year = details['year'], section = details['section'],period = details['period']).count() != 0 :
+        #     messages.error(request, "Attendence already recorded.")
+        #     return redirect('home')
 
         else:
-            students = Student.objects.filter(branch = details['branch'], year = details['year'], section = details['section'])
-            print(students)
-            names = Recognizer(details)
-            print("names -> ", names)
-            for student in students:
-                if str(student.registration_id) in names:
-                    attendence = Attendence(Faculty_Name = faculty, 
-                    Student_ID = str(student.registration_id), 
-                    period = details['period'], 
-                    branch = details['branch'], 
-                    year = details['year'], 
-                    section = details['section'],
-                    status = 'Present')
-                    attendence.save()
-                else:
-                    attendence = Attendence(Faculty_Name = faculty, 
-                    Student_ID = str(student.registration_id), 
-                    period = details['period'],
-                    branch = details['branch'], 
-                    year = details['year'], 
-                    section = details['section'])
-                    attendence.save()
-            attendences = Attendence.objects.filter(date = str(date.today()),branch = details['branch'], year = details['year'], section = details['section'],period = details['period'])
+            # students = Student.objects.filter(branch = details['branch'], year = details['year'], section = details['section'])
+            # print(students)
+
+            try:
+                names = Recognizer()
+                print("name ->", names, "type ->", type(names), "Registation ID ->", names[0])
+                student = Student.objects.get(registration_id=names[0])
+                print("student ->", student.registration_id)
+            
+            except Student.DoesNotExist:
+                return HttpResponse("student doesn't exist")
+
+            except Exception:
+                attendences = Attendence.objects.filter(date = str(date.today()),branch = "unknown", section = "unknown")
+                context = {"attendences":attendences, "ta":False}
+                messages.error(request, "Unknown Student")
+                return render(request, 'attendence_sys/attendence.html', context) 
+
+            attendence = Attendence(Faculty_Name = faculty, 
+                            Student_ID = str(student.registration_id), 
+                            period = '1',
+                            branch = student.branch, 
+                            year = student.year, 
+                            section = student.section,
+                            status = 'Present')
+
+            attendence.save()                
+            attendences = Attendence.objects.filter(date = str(date.today()),branch = student.branch, year =student.year, section = student.section)
             context = {"attendences":attendences, "ta":True}
             messages.success(request, "Attendence taking Success")
-            return render(request, 'attendence_sys/attendence.html', context)        
+            return render(request, 'attendence_sys/attendence.html', context)  
+        
+
+
     context = {}
     return render(request, 'attendence_sys/home.html', context)
 

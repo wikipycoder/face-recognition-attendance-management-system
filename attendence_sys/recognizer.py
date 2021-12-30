@@ -4,7 +4,7 @@ import cv2
 import os
 
 
-def Recognizer(details):
+def Recognizer():
 	video = cv2.VideoCapture(0)
 
 	known_face_encodings = []
@@ -18,8 +18,8 @@ def Recognizer(details):
 	base_dir = os.path.dirname(os.path.abspath(__file__))
 	# os.chdir("..")
 	base_dir = os.getcwd()
-	image_dir = os.path.join(base_dir,"{}\{}\{}\{}\{}\{}".format('static','images','Student_Images',details['branch'],details['year'],details['section']))
-	# print(image_dir)
+	# image_dir = os.path.join(base_dir,"{}\{}\{}\{}\{}\{}".format('static','images','Student_Images',details['branch'],details['year'],details['section']))
+	image_dir = os.path.join(base_dir,"{}\{}\{}".format('static','images','Student_Images'))
 	names = []
 
 	for root,dirs,files in os.walk(image_dir):
