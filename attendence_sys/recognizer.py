@@ -24,7 +24,7 @@ def Recognizer():
 
 	for root,dirs,files in os.walk(image_dir):
 		for file in files:
-			if file.endswith('jpg') or file.endswith('png'):
+			if file.endswith('jpg') or file.endswith('jpeg') or file.endswith('png'):
 				path = os.path.join(root, file)
 				img = face_recognition.load_image_file(path)
 				label = file[:len(file)-4]
@@ -50,12 +50,12 @@ def Recognizer():
 
 		for face_encoding in face_encodings:
 
-			matches = face_recognition.compare_faces(known_face_encodings, np.array(face_encoding), tolerance = 0.6)
+			matches = face_recognition.compare_faces(known_face_encodings, np.array(face_encoding), tolerance=0.6)
 
 			face_distances = face_recognition.face_distance(known_face_encodings,face_encoding)	
 			
 			try:
-				matches = face_recognition.compare_faces(known_face_encodings, np.array(face_encoding), tolerance = 0.6)
+				matches = face_recognition.compare_faces(known_face_encodings, np.array(face_encoding), tolerance=0.6)
 
 				face_distances = face_recognition.face_distance(known_face_encodings,face_encoding)
 				best_match_index = np.argmin(face_distances)
@@ -75,7 +75,7 @@ def Recognizer():
 				bottom*=2
 				left*=2
 
-				cv2.rectangle(frame, (left,top),(right,bottom), (0,0,255), 2)
+				cv2.rectangle(frame, (left,top),(right,bottom), (0,0,255), 4)
 
 				# cv2.rectangle(frame, (left, bottom - 30), (right,bottom - 30), (0,255,0), -1)
 				font = cv2.FONT_HERSHEY_DUPLEX
@@ -87,7 +87,7 @@ def Recognizer():
 				bottom*=2
 				left*=2
 
-				cv2.rectangle(frame, (left,top),(right,bottom), (0,255,0), 2)
+				cv2.rectangle(frame, (left,top),(right,bottom), (0,255,0), 4)
 
 				# cv2.rectangle(frame, (left, bottom - 30), (right,bottom - 30), (0,255,0), -1)
 				font = cv2.FONT_HERSHEY_DUPLEX

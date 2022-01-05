@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import Student, Attendence
 from .filters import AttendenceFilter
+from django.core.mail import BadHeaderError, send_mass_mail
 
 # from django.views.decorators import gzip
 
@@ -160,16 +161,21 @@ def takeAttendence(request):
                 names = Recognizer()
                 print("name ->", names, "type ->", type(names), "Registation ID ->", names[0])
                 student = Student.objects.get(registration_id=names[0])
+                print("Student ID ->", student.id)
                 print("student ->", student.registration_id)
-            
-            except Student.DoesNotExist:
-                return HttpResponse("student doesn't exist")
 
+     
             except Exception:
                 attendences = Attendence.objects.filter(date = str(date.today()),branch = "unknown", section = "unknown")
                 context = {"attendences":attendences, "ta":False}
                 messages.error(request, "Unknown Student")
                 return render(request, 'attendence_sys/attendence.html', context) 
+            
+        
+            if Attendence.objects.filter(Student_ID=student.registration_id, date=date.today()).exists():
+                messages.error(request, "Attendence has already been recorded.")
+                return redirect('home')
+
 
             attendence = Attendence(Faculty_Name = faculty, 
                             Student_ID = str(student.registration_id), 
@@ -179,13 +185,14 @@ def takeAttendence(request):
                             section = student.section,
                             status = 'Present')
 
+         
             attendence.save()                
             attendences = Attendence.objects.filter(date = str(date.today()),branch = student.branch, year =student.year, section = student.section)
-            context = {"attendences":attendences, "ta":True}
+            name = student.firstname + " " + student.lastname
+            context = {"attendences":attendences, "name": name, "ta":True}
             messages.success(request, "Attendence taking Success")
             return render(request, 'attendence_sys/attendence.html', context)  
         
-
 
     context = {}
     return render(request, 'attendence_sys/home.html', context)
@@ -241,3 +248,62 @@ def facultyProfile(request):
 # def getVideo(request):
 #     return render(request, 'attendence_sys/videoFeed.html')
 
+
+
+def get_student_attendence_performance(student):
+    
+    try:
+        percentage = 20/student.days
+        absent = 20-student.days
+    except ZeroDivisionError:
+        percentage = 0
+        absent = 20
+
+    performance = f"""
+        Stuent Name: { student.firstname } { student.firstname }\n
+        Roll No: { student.registration_id }\n
+        Department: { student.branch }\n
+        Year: { student.year }\n
+        Attendence Percentage: { percentage }%\n
+        Present Day/s: { student.days}\n
+        Absent Day/s: { absent }\n  
+    """
+
+    return performance
+   
+
+
+
+@login_required(login_url = 'login')
+def send_report(request):
+
+    if request.method == 'GET':
+
+        if date.today().day >= 1:
+                
+            students = Student.objects.all()
+            mails = []
+            for student in students:
+                performance = get_student_attendence_performance(student)
+                student_instance = ("Attendence Report From University of Sindh, Jamshoro", performance, 'example@gmail.com', [student.contact])
+                mails.append(student_instance)    
+
+
+            try:    
+                send_mass_mail(tuple(mails))
+            except BadHeaderError:
+                messages.error(request, 'Invalid header found.')
+                return redirect("home")
+            except ValueError:
+                messages.error(request, "Network issue")
+                return redirect("home") 
+            except Exception:
+                messages.error(request, "SMTP sender refused...")
+                return redirect("home") 
+            
+            else:
+                messages.success(request, "Attendance Report has been sent")
+                return redirect("home")
+        else:
+            messages.error(request, "Attendence Report is supposed to be sent by end of every month")
+            return redirect('home')

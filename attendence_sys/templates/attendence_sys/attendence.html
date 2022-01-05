@@ -66,10 +66,10 @@
 				<table class="table table-sm">
 					<tr>
 						<th>Student ID</th>
-						<th>Branch</th>
+						<th>Name</th>
+						<th>Department</th>
 						<th>Year</th>
-						<th>Section</th>
-						<th>Period</th>
+						<th>Date</th>
 						<th>Status</th>
 					</tr>
 	
@@ -77,10 +77,10 @@
 	
 					<tr>
 						<td>{{ attendence.Student_ID }}</td>
+						<td>{{ name }}</td>
 						<td>{{ attendence.branch }}</td>
 						<td>{{ attendence.year }}</td>
-						<td>{{ attendence.section }}</td>
-						<td>{{ attendence.period }}</td>
+						<td>{{ attendence.date }} - {{ attendence.time }}</td>
 						<td>{{ attendence.status }}</td>
 					</tr>
 					{% endfor %}
