@@ -75,11 +75,11 @@ def Recognizer():
 				bottom*=2
 				left*=2
 
-				cv2.rectangle(frame, (left,top),(right,bottom), (0,0,255), 4)
+				cv2.rectangle(frame, (left,top),(right,bottom), (0,0,255), 1)
 
 				# cv2.rectangle(frame, (left, bottom - 30), (right,bottom - 30), (0,255,0), -1)
 				font = cv2.FONT_HERSHEY_DUPLEX
-				cv2.putText(frame, 'Unknown', (left, top), font, 0.8, (255,255,255),1)
+				cv2.putText(frame, 'Unknown', (right-150, bottom+35), font, 0.8, (255,255,255),3)
 		else:
 			for (top,right,bottom,left), name in zip(face_locations, face_names):
 				top*=2
@@ -87,11 +87,12 @@ def Recognizer():
 				bottom*=2
 				left*=2
 
-				cv2.rectangle(frame, (left,top),(right,bottom), (0,255,0), 4)
+				cv2.rectangle(frame, (left,top),(right,bottom), (0,255,0), 1)
 
 				# cv2.rectangle(frame, (left, bottom - 30), (right,bottom - 30), (0,255,0), -1)
 				font = cv2.FONT_HERSHEY_DUPLEX
-				cv2.putText(frame, name, (left, top), font, 0.8, (255,255,255),1)
+				name = name.replace("_", " ")
+				cv2.putText(frame, name, (right-210, bottom+35), font, 0.8, (255,255,255), 3)
 
 		cv2.imshow("Face Recognition Panel",frame)
 		if cv2.waitKey(1) == ord('s'):
@@ -99,4 +100,7 @@ def Recognizer():
 
 	video.release()
 	cv2.destroyAllWindows()
+	names = "".join(names)
+	names = names.split("_")
+	
 	return names

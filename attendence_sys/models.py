@@ -25,9 +25,8 @@ class Faculty(models.Model):
 def student_directory_path(instance, filename): 
     filename = filename.split(".")
     ext = filename.pop()
-    name = ''.join(filename) + "." + ext
-    registration_id = instance.registration_id # + "_" + instance.branch + "_" + instance.year + "_" + instance.section
-    filename = registration_id +'.'+ ext 
+    name =  instance.registration_id + " " + instance.firstname + " " + instance.lastname # + "_" + instance.branch + "_" + instance.year + "_" + instance.section
+    filename = name +'.'+ ext 
     return 'Student_Images/{}'.format(filename)
 
 class Student(models.Model):
@@ -35,9 +34,9 @@ class Student(models.Model):
     BRANCH = (
         ('CSE','CSE'),
         ('IT','IT'),
-        ('ECE','ECE'),
+        ('ELECTRONICS','ELECTRONICS'),
         ('CHEM','CHEM'),
-        ('MECH','MECH'),
+        ('TELECOM','TELCOM'),
         ('SE','SE'),
     )
     YEAR = (
